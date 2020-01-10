@@ -1,6 +1,6 @@
 import csv
-import datetime
 from entry import daylio_entry
+from moods import create_moods
 
 # All entries will be in this list regardless of date range
 all_entries = []
@@ -48,6 +48,9 @@ def define_date_range():
             print('Try again, just entering a year or \'other\'. ')
     
     return entries_in_range
+
+# This dict will contain all the moods the user has configured in Daylio, and their numeric equivalents (for calculations)
+moods = create_moods()
 
 # This list will contain all entries in the given date range
 entries_list = define_date_range()

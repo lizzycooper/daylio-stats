@@ -1,6 +1,6 @@
 import datetime
 
-# Simply converts full month names to numbers
+# Converts full month name to number
 def month_to_num(month):
     return {
         'January' : 1,
@@ -16,6 +16,16 @@ def month_to_num(month):
         'November' : 11,
         'December' : 12
     }[month]
+
+# Converts mood to number
+def mood_to_num(mood):
+    return {
+        'Depressed' : 1,
+        'Not happy' : 2,
+        'Alright' : 3,
+        'Happy' : 4,
+        'Great' : 5
+    }[mood]
 
 # Will create one instance for each row in the export, or entry in Daylio. There can be multiple entries per day.
 class daylio_entry():
@@ -49,8 +59,11 @@ class daylio_entry():
         # Moods are (from worst to best): 'Depressed', 'Not happy', 'Alright', 'Happy', 'Great'
         self.mood = export_row[4]
 
+        # Numeric mood for calculations
+        self.mood_num = mood_to_num(self.mood)
+
         # Activities are delimited by " | "
-        self.activities = export_row[5].split(' | ')
+        self.activities = [x.lower() for x in export_row[5].split(' | ')]
 
     # Represent entry with date and mood
     def __repr__(self):
@@ -78,8 +91,17 @@ class daylio_entry():
     # Determines if the entry includes the given activity
     def matches_activity(self, activity):
 
-        if activity in self.activities:
+        if activity.lower() in self.activities:
             return True
         
+        else:
+            return False
+
+    # Determines if the entry matches the given mood
+    def matches_mood(self, mood):
+
+        if self.mood.lower() == mood.lower():
+            return True
+
         else:
             return False
