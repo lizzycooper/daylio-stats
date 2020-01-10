@@ -2,8 +2,8 @@ import csv
 import datetime
 from entry import daylio_entry
 
-# All entries will be in this list
-entries_list = []
+# All entries will be in this list regardless of date range
+all_entries = []
 
 # Daylio export is in file location
 with open('./daylio_export10jan2020.csv', newline='') as csv_file:
@@ -14,21 +14,42 @@ with open('./daylio_export10jan2020.csv', newline='') as csv_file:
         if row[1] == 'date':
             pass
         else:
-            entries_list.append(daylio_entry(row))
+            all_entries.append(daylio_entry(row))
 
+# Asks the user how much data to analyse and only returns entries in that range
 def define_date_range():
-    print('What is the date range you would like to analyse? If you would like to analyse a whole year, enter the year.')
-    year_choice = input('If you would like to analyse a custom date range, just enter \'other\' now: ')
+    entries_in_range = []
 
-    # Removes entries not in the given year
-    if year_choice >= '2010' and year_choice <= '2040':
+    while True:
+        print('What is the date range you would like to analyse? If you would like to analyse a whole year, enter the year.')
+        year_choice = input('Or if you would like to analyse a custom date range, just enter \'other\' now: ')
 
-        for entry in entries_list:
-            if entry.matches_year == False:
-                entries_list.remove(entry)
+        # Removes entries not in the given year
+        if year_choice >= '2010' and year_choice <= '2040':
+
+            for entry in all_entries:
+                if entry.matches_year(year_choice):
+                    entries_in_range.append(entry)
+            break
+        
+        # Removes entries not in the given date range
+        elif year_choice == 'other':
+
+            min_date = input('Enter the first date you would like to analyse, in the format \'YYYY-MM-DD\': ')
+            max_date = input('Enter the last date you would like to analyse, in the format \'YYYY-MM-DD\': ')
+
+            for entry in all_entries:
+                if entry.in_date_range(min_date, max_date):
+                    entries_in_range.append(entry)
+
+            break
+        
+        else:
+            print('Try again, just entering a year or \'other\'. ')
     
-    # Removes entries not in the given date range
-    elif year_choice == 'other':
+    return entries_in_range
 
-        min_date = input('Enter the first date you would like to analyse, in the format \'YYYY-MM-DD\': ')
-        max_date = input('Enter the first date you would like to analyse, in the format \'YYYY-MM-DD\': ')
+# This list will contain all entries in the given date range
+entries_list = define_date_range()
+
+print('done')
